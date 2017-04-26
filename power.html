@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head><title>Complex numbers - powers</title>
+<script src="complex.js"></script>
+<script type="text/javascript">
+
+var ctrlKey = false; 
+
+function pow(z1, z2) {
+  var res = Complex(z1.re, z1.im).pow( Complex(z2.re, z2.im) );
+  return { re: res.r , im: res.i };
+}
+
+function realToScreen (z) {
+  return {x: 200*z.re +400, y: -200*z.im + 400};
+}
+
+function screenToReal (p) {
+  return {re: (p.x-400)/200, im: (p.y-400)/(-200)};
+}
+
+function writeMessage(canvas, message) {
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.font = '14pt Calibri';
+	context.fillStyle = 'black';
+	context.fillText('Powers of complex numbers', 10, 25);
+	context.fillText('Press Control to start calculation from the point on the circle', 10, 45);
+	context.fillText(message, 10, 65);
+	
+	//context.fillText('Maciej Szymczak, 2016.04.25 v5', 10, 600);
+  }
+  
+  function getMousePos(canvas, evt) {
+	var rect = canvas.getBoundingClientRect();
+	ctrlKey = evt.ctrlKey;
+	return {
+	  x: evt.clientX - rect.left,
+	  y: evt.clientY - rect.top
+	};
+  }
+
+function drawPoint (ctx,priorz,z,drawModulo) {
+ ppointOnScreen = realToScreen(priorz);
+ pointOnScreen = realToScreen(z);
+ 
+ if (drawModulo) { 
+   point0 = realToScreen({re:0,im:0});
+   ctx.beginPath();
+   ctx.lineWidth = 1;
+   ctx.strokeStyle = "rgb(0,0,0)";
+   ctx.setLineDash([5, 5]);
+   ctx.moveTo(point0.x,point0.y);
+   ctx.lineTo(pointOnScreen.x,pointOnScreen.y);
+   ctx.stroke();
+ } 
+ 
+ ctx.beginPath();
+ ctx.lineWidth = 1;
+ ctx.strokeStyle = "rgb(0,0,0)";
+ ctx.setLineDash([5, 5]);
+ ctx.moveTo(ppointOnScreen.x,ppointOnScreen.y);
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y);
+ ctx.stroke();
+ 
+ ctx.beginPath();
+ ctx.setLineDash([]);
+ ctx.lineWidth = 1;
+ ctx.strokeStyle = "rgb(255,0,0)";
+ ctx.arc(pointOnScreen.x,pointOnScreen.y,5,0,2*Math.PI);
+ ctx.stroke();
+
+ ctx.setLineDash([]);
+ 
+}
+
+function drawAxes(ctx) {
+ ctx.beginPath();
+ ctx.lineWidth = 2;
+ ctx.strokeStyle = "rgb(0,0,0)";
+ ctx.setLineDash([5, 5]);
+
+ pointOnScreen = realToScreen( {re:0, im:-2} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = realToScreen( {re:0, im:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ pointOnScreen = realToScreen( {re:-2, im:0} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = realToScreen( {re:2, im:0} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ pointOnScreenO = realToScreen( {re:0, im:0} );
+ pointOnScreenRadius1 = realToScreen( {re:1, im:0} );
+ pointOnScreenRadius0 = realToScreen( {re:0, im:0} );
+ ctx.arc(pointOnScreenO.x,pointOnScreenO.y,pointOnScreenRadius1.x - pointOnScreenRadius0.x,0,2*Math.PI);
+ 
+ ctx.stroke();
+ ctx.setLineDash([]);
+}
+
+function draw() {
+ var canvas = document.getElementById("canvas");
+ if (null==canvas || !canvas.getContext) return;
+ ctx=canvas.getContext("2d");
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+		var z = screenToReal ({x: mousePos.x ,y: mousePos.y});
+        var message = 'Current Position: ' + z.re + ',' + z.im;
+		var origZ = z;
+        writeMessage(canvas, message);
+
+		drawAxes(ctx); 
+		
+		if (ctrlKey==false) {
+			var drawModulo = true;
+			priorz=z;
+			for (interator = 1; interator < 40; interator++) { 
+			  drawPoint(ctx,priorz,z,drawModulo);
+			  drawModulo = false;
+			  priorz=z;
+			  if (z.re*z.re + z.im*z.im > 100) {break};
+			  z = pow(origZ, {re: interator , im: 0} );
+			} 
+		}
+				
+
+		if (ctrlKey==true) {
+    		pointOnCircle = {re: z.re / Math.sqrt(z.re*z.re + z.im*z.im), im: z.im / Math.sqrt(z.re*z.re + z.im*z.im)};
+			origZ = pointOnCircle; 
+			drawPoint(ctx,pointOnCircle,pointOnCircle,false);
+			priorz=pointOnCircle;
+			for (interator = 1; interator < 40; interator++) { 
+			  drawPoint(ctx,priorz,pointOnCircle,drawModulo);
+			  drawModulo = false;
+			  priorz=pointOnCircle;
+			  if (pointOnCircle.re*pointOnCircle.re + pointOnCircle.im*pointOnCircle.im > 100) {break};
+			  pointOnCircle = pow(origZ, {re: interator , im: 0} );
+			} 
+		}
+		
+		 //axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
+		 //axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+      }, false); 
+ 
+}
+
+</script>
+</head>
+<body onload="draw()">
+<button class="button" onclick="window.location.href = 'http://plansoft.org/edu';"/>Home</button> 
+<canvas id="canvas" width="800" height="800"></canvas>
+</body>
+</html>
+

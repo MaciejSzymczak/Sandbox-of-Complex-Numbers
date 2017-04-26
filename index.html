@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sandbox of Complex Numbers</title>
+<style type="text/css">
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.button5 {
+    background-color: white;
+    color: black;
+    border: 2px solid #555555;
+	width: 70%;
+}
+
+.button5:hover {
+    background-color: #555555;
+    color: white;
+}
+
+body{
+margin:0;
+padding:0;
+line-height: 1.5em;
+}
+
+b{font-size: 110%;}
+em{color: red;}
+
+#maincontainer{
+width: 840px; /*Width of main container*/
+margin: 0 auto; /*Center container on page*/
+}
+
+#topsection{
+clear: left;
+width: 100%;
+background: black;
+color: #FFF;
+text-align: center;
+padding: 4px 0;
+}
+
+#topsection h1{
+margin: 0;
+padding-top: 15px;
+}
+
+#contentwrapper{
+float: left;
+width: 100%;
+margin:  50px 20px 20px 20px;
+}
+
+#contentcolumn{
+margin: 0 10px 0 180px; /*Margins for content column. Should be "0 RightColumnWidth 0 LeftColumnWidth*/
+}
+
+#leftcolumn{
+float: left;
+width: 180px; /*Width of left column in pixel*/
+margin-left: -840px; /*Set margin to that of -(MainContainerWidth)*/
+}
+
+#rightcolumn{
+float: left;
+width: 10px; /*Width of right column*/
+margin-left: -10px; /*Set left margin to -(RightColumnWidth)*/
+}
+
+#footer{
+clear: left;
+width: 100%;
+background: black;
+color: #FFF;
+text-align: center;
+padding: 4px 0;
+}
+
+#footer a{
+color: #FFFF80;
+}
+
+.innertube{
+margin: 10px; /*Margins for inner DIV inside each column (to provide padding)*/
+margin-top: 0;
+}
+
+/* ####### responsive layout CSS ####### */
+
+@media (max-width: 840px){ /* 1st level responsive layout break point- drop right column down*/
+	#maincontainer{
+	width: 100%;
+	}
+
+	#leftcolumn{
+	margin-left: -100%;
+	}
+	
+	#rightcolumn{
+	float: none;
+	width: 100%;
+	margin-left: 0;
+	clear: both;
+	}
+	
+	#contentcolumn{
+	margin-right: 0;
+	}
+}
+
+@media (max-width: 600px){ /* 2nd level responsive layout break point- drop left column down */
+	#leftcolumn{
+	float: none;
+	width: 100%;
+	clear: both;
+	margin-left: 0;
+	}
+	
+	#contentcolumn{
+	margin-left: 0;
+	}
+}
+
+</style>
+
+</head>
+<body>
+<div id="maincontainer">
+
+<div id="topsection"><div class="innertube"><h1>Sandbox of Complex Numbers</h1></div></div>
+
+<div id="contentwrapper">
+<div id="contentcolumn">
+<div class="innertube">
+<center>
+			What would you like to play with today?<br>
+			<button onclick="window.location.href='power.html'" class="button button5">Powers of complex numbers and roots of unity</button><br>
+			<button onclick="window.location.href='transformations.html'" class="button button5">Geometrical Transformations in the Complex Plane</button>
+			<br>Links<br>
+			<a href="https://www.youtube.com/watch?v=sD0NjbwqlYw&t=981s">Riemann zeta function</a>&nbsp;&nbsp;&nbsp;
+			<a href="https://en.wikipedia.org/wiki/Root_of_unity">Roots of unity</a>&nbsp;&nbsp;&nbsp;
+			<a href="http://mathworld.wolfram.com/ConformalMapping.html">Conformal Mapping</a>
+</center>
+</div>
+</div>
+</div>
+
+<div id="leftcolumn">
+<div class="innertube" style="margin:  50px 20px 20px 20px;">
+<img src="icons/complex.png" style="width: 90%; height: 90%;" />
+<img src="icons/lemmling-Sandbox.svg" />
+</div>
+
+</div>
+
+<div id="rightcolumn">
+<div class="innertube"></div>
+</div>
+
+<div id="footer">This is educational page for everyone willing to undestand complex numbers.<br> 
+Author <a href="https://www.linkedin.com/in/maciej-szymczak-a818a011/">Maciej Szymczak</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Acknowledgements 
+<a href="https://en.wikipedia.org/wiki/Ian_Stewart_(mathematician)">Ian Steward</a>,
+<a href="https://github.com/patrickroberts/">Patrick Roberts</a>,
+<a href="http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app"> William Malone</a> 
+</div>
+
+
+</div>
+
+</body>
+</html>

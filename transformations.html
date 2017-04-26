@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Complex numbers - transformations</title>
+<meta charset="utf-8">
+
+<style>
+.button {border-radius: 8px;}
+.btn-group .button {
+    background-color: #FFFFFF;
+    border: 1px solid green;
+    color: black;
+    padding: 1px 1px;
+	height: 35px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+}
+.btn-group .button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+.btn-group .button:hover {
+    background-color: #3e8e41;
+} 
+
+.fixedWidth {
+ width: 35px;
+}
+
+#parent {
+  display: flex;
+  padding: 10px 10px;
+}
+#child {
+  float: right;
+  width: 160px;
+}
+
+.functions-group .button {
+    background-color: #FFFFFF;
+    border: 1px solid green;
+    color: black;
+    padding: 3px 3px;
+	height: 45px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+	margin: 0 0 5px 5px;
+}
+.functions-group .button:hover {
+    background-color: #3e8e41;
+}
+
+#functions {
+  float: right;
+  width: 800px;
+}
+
+</style>
+
+<script src="complex.js"></script>
+<script type="text/javascript">
+
+// Author: Maciej Szymczak soft@home.pl 
+//                    http://www.homeschoolmath.net/worksheets/equation_editor.php
+
+dmHandwriting = 1;
+dmLine = 2;
+dmCircle =3;
+dmRect =4;
+drawMode = dmLine;
+
+var circleCenter;
+
+var currentZi;
+var currentZr;
+var currentResi;
+var currentResr;
+
+currentWindow = 0;
+sr = 1;
+function ComplexToScreen (z) {
+  return {
+      x: 200*sr*z.r +400*sr+810*sr*currentWindow
+	, y: -200*sr*z.i + 400*sr};
+}
+
+function ScreenToComplex (p) {
+  return {
+    r: (p.x-400*sr-810*sr*currentWindow)/200*sr
+  , i: (p.y-400*sr)/(-200*sr)
+  };
+}
+
+function writeMessage(canvas, message) {
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.font = '14pt Calibri';
+	
+	//var gradient=context.createLinearGradient(0,0,1700,0);
+	//gradient.addColorStop("0","magenta");
+	//gradient.addColorStop("0.5","blue");
+	//gradient.addColorStop("1.0","red");
+	//context.fillStyle = gradient;
+	context.fillText('Geometrical Transformations in the Complex Plane', 10, 25);
+	context.fillText(message, 10, 65);
+	
+	context.fillText("Re="+ Math.round(currentZr*100)/100 + " Im=" + Math.round(currentZi*100)/100 , 10, 45);
+	context.fillText("Re="+ Math.round(currentResr*100)/100 + " Im=" + Math.round(currentResi*100)/100 , 820, 45);
+  }
+  
+  function getMousePos(canvas, evt) {
+	var rect = canvas.getBoundingClientRect();
+	ctrlKey = evt.ctrlKey;
+	return {
+	  x: evt.clientX - rect.left,
+	  y: evt.clientY - rect.top
+	};
+  }
+
+function drawAxes(ctx) {
+
+ ctx.beginPath();
+ ctx.lineWidth = 2;
+ ctx.strokeStyle = "rgb(0,0,0)";
+ ctx.setLineDash([]);
+ 
+ //sqare
+ pointOnScreen = ComplexToScreen( {r:-2, i:-2} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:-2, i:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+ pointOnScreen = ComplexToScreen( {r:2, i:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+ pointOnScreen = ComplexToScreen( {r:2, i:-2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+ pointOnScreen = ComplexToScreen( {r:-2, i:-2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ ctx.closePath();
+ ctx.stroke();
+ 
+ ctx.beginPath();
+ ctx.lineWidth = 1;
+ ctx.strokeStyle = "rgb(0,0,0)";
+ ctx.setLineDash([2, 5]);
+ 
+ //axes
+ pointOnScreen = ComplexToScreen( {r:0, i:-2} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:0, i:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+ pointOnScreen = ComplexToScreen( {r:-2, i:0} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:2, i:0} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ //auxiary lines
+ pointOnScreen = ComplexToScreen( {r:-1, i:-2} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:-1, i:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ pointOnScreen = ComplexToScreen( {r:1, i:-2} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:1, i:2} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ pointOnScreen = ComplexToScreen( {r:-2, i:-1} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:2, i:-1} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ pointOnScreen = ComplexToScreen( {r:-2, i:1} );
+ ctx.moveTo(pointOnScreen.x,pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:2, i:1} );
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+ ctx.closePath();
+ ctx.stroke();
+ 
+ currentWindow = 0;
+ pointOnScreen = ComplexToScreen( {r:0, i:0} );
+ ctx.fillText("0" , pointOnScreen.x, pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:1, i:0} );
+ ctx.fillText("1" , pointOnScreen.x, pointOnScreen.y);
+ 
+ currentWindow = 1;
+ pointOnScreen = ComplexToScreen( {r:0, i:0} );
+ ctx.fillText("0" , pointOnScreen.x, pointOnScreen.y);
+ pointOnScreen = ComplexToScreen( {r:1, i:0} );
+ ctx.fillText("1" , pointOnScreen.x, pointOnScreen.y);
+
+}
+
+rotationMode = "off";
+sinr = 0.0;
+cosr = 0.0;
+
+powr = 1; 
+powi = 0;
+var input;
+
+function transform (z) {
+	//return z.mult( z  );
+	tmp = z;
+	if (rotationMode == "on") {
+		newzr = z.r*cosr - z.i*sinr;
+		newzi = z.r*sinr + z.i*cosr;
+		tmp = Complex (newzr, newzi);
+	}
+	var calc = Complex.parseFunction(input.value,['z']);
+	return calc( tmp );
+}
+
+function drawPoint (ctx,priorz,z) {
+ ppointOnScreen = ComplexToScreen(priorz);
+ pointOnScreen = ComplexToScreen(z);
+ 
+ ctx.moveTo(ppointOnScreen.x,ppointOnScreen.y);
+ ctx.lineTo(pointOnScreen.x,pointOnScreen.y);
+ 
+ //ctx.beginPath();
+ //ctx.setLineDash([]);
+ //ctx.lineWidth = 1;
+ //ctx.strokeStyle = "rgb(255,0,0)";
+ //ctx.arc(pointOnScreen.x,pointOnScreen.y,5,0,2*Math.PI);
+ //ctx.stroke();
+}
+
+function drawArrow(evt) {
+	currentWindow = 0;
+	var mousePos = getMousePos(canvas, evt);
+	var z = ScreenToComplex ({x: mousePos.x ,y: mousePos.y});
+	res = transform( Complex(z.r, z.i) );
+
+	ctx.beginPath();
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = "rgb(255,0,0)";
+	ctx.setLineDash([]);
+
+	ctx.moveTo(mousePos.x,mousePos.y);
+	currentWindow = 1;
+	pointOnScreen = ComplexToScreen( res );
+	ctx.lineTo(pointOnScreen.x,pointOnScreen.y); 
+
+	ctx.closePath();
+	ctx.stroke();
+	ctx.setLineDash([]);
+	
+	currentZi=z.i;
+	currentZr=z.r;
+	currentResi=res.i;
+	currentResr=res.r;
+}
+
+var canvas;
+
+var colorPurple = "#cb3594";
+var colorGreen = "#659b41";
+var colorYellow = "#ffcf33";
+var colorBrown = "#986928";
+
+var curColor = colorPurple;
+var curSize = 1;
+
+var picture = new Array();
+
+var paint;
+
+function clearPicture()  {
+	picture = [];
+	refreshScreen(); 
+}
+
+
+function addPoint(x, y, dragging)
+{  
+	currentWindow = 0;
+	z = ScreenToComplex ({x: x,y: y});
+	res = transform( Complex(z.r, z.i) );
+	currentWindow = 1;
+	pointOnScreen = ComplexToScreen( res ); 
+	
+	picture.push ( 
+		{clickX : x
+	   , clickY: y
+	   , clickDrag: dragging
+	   , clickColor: curColor
+	   , clickSize: curSize
+	   , ComplexX: pointOnScreen.x
+	   , ComplexY: pointOnScreen.y
+	   });
+}
+
+function recalculate () {
+  for(var i=0; i < picture.length; i++) {
+	x = picture[i].clickX;  
+	y = picture[i].clickY;
+	
+	currentWindow = 0;
+	z = ScreenToComplex ({x: x,y: y});
+	res = transform( Complex(z.r, z.i) );
+	currentWindow = 1;
+	pointOnScreen = ComplexToScreen( res ); 
+	
+	picture[i].ComplexX = pointOnScreen.x;
+	picture[i].ComplexY = pointOnScreen.y;
+  }
+  refreshScreen(); 
+}
+
+function undo(redraw)  {
+	//delete tail
+	
+	var j=0;
+	for (var i = picture.length-1; i >0; i--) {
+		if (!picture[i].clickDrag) {
+			j = i;
+			break;
+		}
+	}
+	
+	picture = picture.slice(0,j);
+	if (redraw) refreshScreen(); 
+}
+
+function drawLine(x, y, dragging)
+{
+	var j=0;
+	for (var i = picture.length-1; i >0; i--) {
+		if (!picture[i].clickDrag) {
+			j = i;
+			break;
+		}
+	}
+	
+	startX = picture[j].clickX;
+	startY = picture[j].clickY;
+	undo();
+	addPoint(startX, startY);
+	lineLen = Math.sqrt ( (x - startX)*(x - startX) + (y - startY)*(y - startY) );
+	for (var p = 0; p <=1; p=p+1/lineLen) {
+		addPoint(startX+(x-startX)*p , startY+(y-startY)*p, true);
+	}
+	//addPoint(x, y, true);
+	refreshScreen(); 
+}
+
+function drawRect(x, y, dragging)
+{
+	var j=0;
+	for (var i = picture.length-1; i >0; i--) {
+		if (!picture[i].clickDrag) {
+			j = i;
+			break;
+		}
+	}
+	
+	startX = picture[j].clickX;
+	startY = picture[j].clickY;
+	undo();
+	/*
+		   1
+	    *----*
+	   4|    |2
+		|    |
+		*----*
+		   3 
+	*/
+	addPoint(startX, startY);
+	for (var p = 0; p <=1; p=p+0.1/2) {
+		addPoint(startX+(x-startX)*p , startY, true);
+	}
+	addPoint(startX+(x-startX), startY, true);
+	for (var p = 0; p <=1; p=p+0.1/2) {
+		addPoint(startX+(x-startX) , startY+(y-startY)*p, true);
+	}
+	addPoint(startX+(x-startX) , startY+(y-startY), true);
+	for (var p = 0; p <=1; p=p+0.1/2) {
+		addPoint(startX+(x-startX)-(x-startX)*p , startY+(y-startY), true);
+	}
+	addPoint(startX , startY+(y-startY), true);
+	for (var p = 0; p <=1; p=p+0.1/2) {
+	  addPoint(startX, startY+(y-startY)-(y-startY)*p, true);
+	}
+	addPoint(startX, startY, true);
+	refreshScreen(); 
+}
+
+function drawCircle(x, y, dragging)
+{
+	startX = circleCenter.x;
+	startY = circleCenter.y;
+	undo();
+
+	radius = Math.sqrt ( (x - startX)*(x - startX) + (y - startY)*(y - startY) );
+	p = 0;
+	addPoint(startX+Math.sin(p)*radius, startY+Math.cos(p)*radius);
+	
+	for (var p = 0; p <=2*Math.PI; p=p+Math.PI/30) {
+		addPoint(startX+Math.sin(p)*radius , startY+Math.cos(p)*radius, true);
+	}
+	refreshScreen(); 
+}
+
+function refreshScreen() {
+	writeMessage(canvas, '');
+
+	currentWindow = 0;
+	drawAxes(ctx); 
+	currentWindow = 1;
+	drawAxes(ctx); 
+	
+  ctx.lineJoin = "round";
+  ctx.setLineDash([]);
+
+  for(var i=0; i < picture.length; i++) {
+    ctx.beginPath();
+    if(picture[i].clickDrag && i){
+      ctx.moveTo(picture[i-1].clickX, picture[i-1].clickY);
+     }else{
+       ctx.moveTo(picture[i].clickX-1, picture[i].clickY);
+     }
+     ctx.lineTo(picture[i].clickX, picture[i].clickY);
+     ctx.closePath();
+	 ctx.strokeStyle = picture[i].clickColor;
+	 ctx.lineWidth = picture[i].clickSize;
+     ctx.stroke();
+  }
+
+  for(var i=0; i < picture.length; i++) {
+    ctx.beginPath();
+    if(picture[i].clickDrag && i){
+      ctx.moveTo(picture[i-1].ComplexX, picture[i-1].ComplexY);
+     }else{
+       ctx.moveTo(picture[i].ComplexX-1, picture[i].ComplexY);
+     }
+     ctx.lineTo(picture[i].ComplexX, picture[i].ComplexY);
+     ctx.closePath();
+	 ctx.strokeStyle = picture[i].clickColor;
+	 ctx.lineWidth = picture[i].clickSize;
+     ctx.stroke();
+  }
+}
+
+function setCalc (f) {
+	document.getElementById("calc").value = f;
+	recalculate();
+	refreshScreen();
+}
+
+function initGraph() {
+	input = document.getElementById('calc');
+	 
+	canvas = document.getElementById("canvas");
+	if (null==canvas || !canvas.getContext) return;
+	ctx=canvas.getContext("2d");
+	refreshScreen(); 
+ 
+	canvas.addEventListener('mousemove', function(evt) {
+		if(paint){
+			var mousePos = getMousePos(canvas, evt);
+			switch(drawMode) {
+				case dmHandwriting:
+					addPoint(mousePos.x, mousePos.y, true);
+					break;
+				case dmLine:
+					drawLine(mousePos.x, mousePos.y, true);
+					break;
+				case dmCircle:
+					drawCircle(mousePos.x, mousePos.y, true);
+					break;
+				case dmRect:
+					drawRect(mousePos.x, mousePos.y, true);
+					break;
+				default:
+			}
+		}
+		refreshScreen();
+		drawArrow(evt);
+	}, false); 
+	
+	canvas.addEventListener('mousedown', function(evt) {
+		paint = true;
+		var mousePos = getMousePos(canvas, evt);
+		switch(drawMode) {
+			case dmHandwriting:
+				addPoint(mousePos.x, mousePos.y);
+				break;
+			case dmLine:
+				addPoint(mousePos.x, mousePos.y);
+				break;
+			case dmCircle:
+				circleCenter = mousePos;
+				addPoint(mousePos.x, mousePos.y);
+				break;
+			case dmRect:
+				addPoint(mousePos.x, mousePos.y);
+				break;
+			default:
+		}
+		refreshScreen();
+	}, false); 
+	
+	canvas.addEventListener('mouseup', function(evt) {
+		paint = false;
+	}, false); 
+
+	canvas.addEventListener('mouseleave', function(evt) {
+		paint = false;
+	}, false); 
+
+}
+
+// default picture
+// save
+// donate
+// scalable
+// transformations
+// github
+
+</script>
+</head>
+<body onload="initGraph()">
+      <div  id="functions" class="functions-group">
+		<span style="float: left;">Function:</span>
+		<input style="float: left;" type="text" id="calc" value="z^2" onchange="recalculate();"/>
+		<button  class="button" onclick="setCalc('z');"/><img src="icons/func_z.gif"/></button>
+		<button  class="button" onclick="setCalc('1/z');"/><img src="icons/func_1z.gif" /></button>
+		<button  class="button" onclick="setCalc('1/(z^2)');"/><img src="icons/func_1z2.gif" /></button>
+		<button  class="button" onclick="setCalc('sin(z)');"/><img src="icons/func_sinz.gif" /></button>
+		<button  class="button" onclick="setCalc('cos(z)');"/><img src="icons/func_cosz.gif" /></button>
+		<button  class="button" onclick="setCalc('z^2');"/><img src="icons/func_z2.gif" /></button>
+		<button  class="button" onclick="setCalc('z^3');"/><img src="icons/func_z3.gif" /></button>
+		<button  class="button" onclick="setCalc('e^z');"/><img src="icons/func_ez.gif" /></button>
+		<button  class="button" onclick="setCalc('e^(i*z)');"/><img src="icons/func_eiz.gif" /></button>
+		<button  class="button" onclick="setCalc('cos(z)+i*sin(z)');"/><img src="icons/func_coszsinz.png" /></button>
+		<button  class="button" onclick="setCalc('1/((z)*(z-0.5)*(z+0.5))');"/><img src="icons/func_3.png" /></button>
+      </div>
+	  
+  	  <!--input id="powerValue" type ="range" min ="-2.0" max="2.0" step ="0.01" onchange="draw();"/-->
+	  <!--input id="rotation" type ="range" min ="-180" max="180" step ="1" onchange="draw();"/-->
+
+	  <div id="parent">
+	  <div id="child" class="btn-group">
+	  <button  class="button" onclick="curColor=colorPurple;"/><img src="icons/purple.png" /></button>
+	  <button  class="button" onclick="curColor=colorGreen;"/><img src="icons/green.png" /></button>
+	  <button  class="button" onclick="curColor=colorYellow;"/><img src="icons/yellow.png" /></button>
+	  <button  class="button" onclick="curColor=colorBrown;"/><img src="icons/brown.png" /></button> 
+	  </div>
+	  
+	  <div id="child" class="btn-group">
+	  <button class="button fixedWidth" onclick="curSize=1;"/>1</button>
+	  <button class="button fixedWidth" onclick="curSize=4;"/>4</button>
+	  <button class="button fixedWidth" onclick="curSize=8;"/>8</button>
+	  <button class="button fixedWidth" onclick="curSize=16;"/>16</button> 
+	  </div>
+	  
+	  <div id="child" class="btn-group">
+	  <button  class="button fixedWidth" class="button" onclick="drawMode = dmHandwriting;"/><img src="icons/curve.png" /></button>
+	  <button  class="button fixedWidth" onclick="drawMode = dmLine;"/><img src="icons/line.png" /></button>
+	  <button  class="button fixedWidth" onclick="drawMode = dmCircle;"/><img src="icons/circle.png" /></button>
+	  <button  class="button fixedWidth"  onclick="drawMode = dmRect;"/><img src="icons/rectangle.png" /></button>
+	  </div>
+	  
+	  <div id="child" class="btn-group">
+	  <button  class="button fixedWidth" onclick="clearPicture();"/><img src="icons/clear.png" /></button> 
+	  <button  class="button" onclick="undo(true);"/><img src="icons/undo.png"/></button> 
+	  <button class="button" onclick="window.location.href = 'http://plansoft.org/edu';"/>Home</button> 
+	  </div>
+	  </div>
+	  
+      <canvas id="canvas" width="1700px" height="800px"></canvas>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
